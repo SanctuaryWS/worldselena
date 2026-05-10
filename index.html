@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sanctuary — каталог книг v-erotica</title>
+
+  <!-- Telegram Mini App -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #050507;
+      color: #ffffff;
+      padding: 18px;
+    }
+
+    .app {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #9fb0ff;
+      box-shadow: 0 0 18px rgba(159,176,255,.6);
+      background: #111;
+      flex: 0 0 auto;
+    }
+
+    .site-title h1 {
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .site-title p {
+      color: #aaaec4;
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    .search-row {
+      display: flex;
+      margin-bottom: 16px;
+    }
+
+    .search-row input {
+      flex: 1;
+      padding: 15px 18px;
+      border-radius: 24px;
+      border: none;
+      outline: none;
+      background: #191b2f;
+      color: white;
+      font-size: 16px;
+    }
+
+    /* Верхнее меню: гибкое, без прокрутки, компактное */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 14px;
+      overflow: visible;
+      white-space: normal;
+      margin-bottom: 6px;
+      padding-bottom: 0;
+    }
+
+    .tab {
+      flex: 0 0 auto;
+      background: none;
+      border: none;
+      color: #85899e;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.2;
+      cursor: pointer;
+      padding: 4px 0 6px;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      color: white;
+      border-bottom: 3px solid white;
+    }
+
+    .filter-line {
+      min-height: 0;
+      margin-bottom: 10px;
+      color: #aaaec4;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-line:empty {
+      display: none;
+      margin: 0;
+    }
+
+    .active-filter {
+      background: linear-gradient(135deg, #4051a8, #2b8f77);
+      color: white;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .reset-filter {
+      background: #2a2d42;
+      color: #ffadc9;
+      border: 1px solid #4b506f;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .history {
+      background: #202131;
+      border-radius: 18px;
+      padding: 16px;
+      margin-top: 12px;
+      margin-bottom: 18px;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .history h2,
+    .results-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #e6e8f5;
+      letter-spacing: 0.2px;
+    }
+
+    .history button {
+      background: none;
+      border: none;
+      color: #ffadc9;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .history p,
+    .counter {
+      color: #8f93a8;
+      font-size: 13px;
+    }
+
+    .results-title {
+      margin-bottom: 8px;
+    }
+
+    .counter {
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .card {
+      background: #202131;
+      border: 1px solid #313653;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 8px 18px rgba(0,0,0,.25);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .cover-wrap {
+      position: relative;
+      aspect-ratio: 2 / 3;
+      background: linear-gradient(135deg,#2d335d,#12131d);
+      overflow: hidden;
+    }
+
+    .cover-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .status-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: bold;
+      background: rgba(45,122,86,.92);
+      color: white;
+      z-index: 2;
+    }
+
+    .card-content {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .book-title {
+      font-size: 13px;
+      line-height: 1.2;
+      min-height: 44px;
+      max-height: 44px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    /* Теги гибкие: если тегов нет — место исчезает */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 0;
+      height: auto;
+      max-height: 54px;
+      overflow: hidden;
+      margin: 0 0 10px 0;
+      align-content: flex-start;
+    }
+
+    .tags:empty {
+      display: none;
+      min-height: 0;
+      height: 0;
+      max-height: 0;
+      margin: 0;
+      padding: 0;
+    }
+
+    .tag {
+      border: none;
+      border-radius: 8px;
+      background: #4a4d58;
+      color: #f2f2f2;
+      padding: 5px 9px;
+      font-size: 12px;
+      cursor: pointer;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tag:hover {
+      background: #626672;
+    }
+
+    .tag.active-tag {
+      background: linear-gradient(135deg, #5869d8, #2baf8c);
+      color: white;
+      box-shadow: 0 0 10px rgba(88,105,216,.55);
+    }
+
+    .links {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 7px;
+      margin-top: auto;
+    }
+
+    .links a {
+      text-decoration: none;
+      text-align: center;
+      color: white;
+      border: 1px solid #58618d;
+      border-radius: 10px;
+      padding: 8px 6px;
+      font-size: 13px;
+      font-weight: bold;
+      background: #242846;
+    }
+
+    .links a:hover {
+      background: #32385f;
+    }
+
+    .empty {
+      color: #aaaec4;
+      padding: 24px;
+      background: #202131;
+      border-radius: 18px;
+      display: none;
+    }
+
+    /* Окно фильтров */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .55);
+      z-index: 50;
+      display: none;
+      align-items: flex-end;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .category-sheet {
+      width: 100%;
+      max-width: 900px;
+      max-height: 88vh;
+      overflow-y: auto;
+      margin: 0 auto;
+      background: rgba(42, 43, 55, .97);
+      border-radius: 26px 26px 0 0;
+      padding: 18px 14px 16px;
+      box-shadow: 0 -10px 35px rgba(0,0,0,.45);
+      animation: sheetUp .22s ease-out;
+    }
+
+    @keyframes sheetUp {
+      from {
+        transform: translateY(100%);
+        opacity: .5;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .sheet-title {
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+
+    .sheet-section-title {
+      color: #b9bdcf;
+      font-size: 13px;
+      margin: 12px 0 8px;
+      font-weight: bold;
+    }
+
+    .sheet-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .sheet-chip {
+      border: none;
+      border-radius: 999px;
+      background: #777b82;
+      color: #fff;
+      padding: 8px 11px;
+      font-size: 12px;
+      line-height: 1.1;
+      font-weight: bold;
+      cursor: pointer;
+      max-width: 100%;
+    }
+
+    .sheet-chip.selected {
+      background: linear-gradient(135deg, #ff3c96, #ff1c7b);
+      box-shadow: 0 0 16px rgba(255, 60, 150, .65);
+    }
+
+    .sheet-actions {
+      position: sticky;
+      bottom: -16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 16px;
+      padding-top: 14px;
+      background: linear-gradient(to top, rgba(42,43,55,1), rgba(42,43,55,.95));
+    }
+
+    .sheet-actions button {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 10px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+    }
+
+    .sheet-reset {
+      background: #8b8e93;
+    }
+
+    .sheet-confirm {
+      background: linear-gradient(135deg, #ff3c96, #ff1c7b);
+      box-shadow: 0 0 16px rgba(255, 60, 150, .55);
+    }
+
+    @media (max-width: 560px) {
+      body {
+        padding: 12px;
+      }
+
+      header {
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .logo {
+        width: 60px;
+        height: 60px;
+      }
+
+      .site-title h1 {
+        font-size: 25px;
+      }
+
+      .search-row {
+        margin-bottom: 14px;
+      }
+
+      .tabs {
+        gap: 5px 11px;
+        margin-bottom: 4px;
+        padding-bottom: 0;
+      }
+
+      .tab {
+        font-size: 12px;
+        padding: 3px 0 5px;
+      }
+
+      .history {
+        margin-top: 10px;
+        margin-bottom: 16px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+      }
+
+      .book-title {
+        font-size: 12px;
+        min-height: 42px;
+        max-height: 42px;
+      }
+
+      .tags {
+        max-height: 50px;
+        margin-bottom: 8px;
+      }
+
+      .tag {
+        font-size: 11px;
+        padding: 5px 7px;
+      }
+
+      .links {
+        gap: 6px;
+      }
+
+      .links a {
+        font-size: 12px;
+        padding: 7px 5px;
+      }
+
+      .status-badge {
+        font-size: 10px;
+        padding: 5px 7px;
+      }
+
+      .category-sheet {
+        max-height: 82vh;
+        border-radius: 22px 22px 0 0;
+      }
+
+      .sheet-chip {
+        font-size: 11px;
+        padding: 7px 10px;
+      }
+
+      .sheet-options {
+        gap: 6px;
+      }
+
+      .sheet-title {
+        font-size: 20px;
+      }
+
+      .sheet-actions {
+        gap: 10px;
+      }
+    }
+  </style>
+
+</head>
+<body>
+  <div class="app">
+    <header>
+      <img class="logo" src="https://i.ibb.co/d0jjvDWf/logo.jpg" alt="Sanctuary logo">
+      <div class="site-title">
+        <h1>Sanctuary</h1>
+        <p>Каталог книг и серий</p>
+      </div>
+    </header>
+
+    <div class="search-row">
+      <input id="searchInput" type="text" placeholder="Введите название книги" />
+    </div>
+
+    <nav class="tabs" id="tabs">
+      <button class="tab active" id="homeButton">Главная</button>
+      <button class="tab menu-tab" data-menu="genre">Жанры ▼</button>
+      <button class="tab menu-tab" data-menu="author">Авторы ▼</button>
+      <button class="tab menu-tab" data-menu="series">Серии ▼</button>
+      <button class="tab menu-tab" data-menu="standalone">Однотомники ▼</button>
+      <button class="tab menu-tab" data-menu="tag">Подборки ▼</button>
+    </nav>
+
+    <div class="filter-line" id="filterLine"></div>
+
+    <section class="history">
+      <div class="history-header">
+        <h2>История</h2>
+        <button id="clearHistory">Очистить</button>
+      </div>
+      <p id="historyText">История пока пуста.</p>
+    </section>
+
+    <h2 class="results-title">Результаты</h2>
+    <p class="counter" id="counter"></p>
+    <main class="grid" id="bookGrid"></main>
+    <div class="empty" id="emptyMessage">Ничего не найдено.</div>
+  </div>
+
+  <div class="modal-backdrop" id="filterBackdrop">
+    <div class="category-sheet">
+      <h2 class="sheet-title" id="sheetTitle">Фильтр</h2>
+
+      <div class="sheet-section-title" id="sheetMainTitle">Выберите пункт</div>
+      <div class="sheet-options" id="sheetCategories"></div>
+
+      <div class="sheet-section-title" id="sheetTagsTitle" style="display:none;">Теги-подборки</div>
+      <div class="sheet-options" id="sheetTags" style="display:none;"></div>
+
+      <div class="sheet-actions">
+        <button class="sheet-reset" id="sheetReset">Сбросить</button>
+        <button class="sheet-confirm" id="sheetConfirm">Подтвердить</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+      Telegram.WebApp.setHeaderColor("#050507");
+      Telegram.WebApp.setBackgroundColor("#050507");
+    }
+
+    console.log("Sanctuary version: erotica-onetomes-v2");
+
+    const books = [
+{
+  title: "Джанет Раллисон / Когда я встретила твоего брата",
+  author: "Джанет Раллисон",
+  cover: "https://i.ibb.co/pvQwF41F/how-i-met-your-brother-alt2.jpg",
+  status: "Активный",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Курортный роман",
+    "Френдзона"
+  ],
+  annotation: "https://t.me/kalosis/204/314",
+  read: "https://t.me/kalosis/204/315"
+},
+{
+  title: "Джейми Шлоссер / Проклятье короля фейри (1)",
+  author: "Джейми Шлоссер",
+  cover: "https://i.ibb.co/r2NFGBkH/The-Fae-Kings-Curse-alt.jpg",
+  status: "Активный",
+  series: "Между Рассветом и Закатом",
+  genres: [
+    "Фэнтези",
+	"Эротика"
+  ],
+  tags: [
+    "Феи / Фейри",
+	"Суженные",
+    "Ведьмы"
+  ],
+  annotation: "https://t.me/kalosis/240/291",
+  read: "https://t.me/kalosis/240/293"
+},
+{
+  title: "Шеррилин Кеньон / Сими (3)",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/N6nY3NcZ/Simi-1.jpg",
+  status: "Активный",
+  series: "Тёмные Охотники",
+  subseries: "Хроники Ника",
+  arcs: [
+    "Тень огня",
+    "Адские Ищейки"
+  ],
+  genres: [
+    "Молодёжный роман",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Охотники",
+    "Боги",
+    "Демоны"
+  ],
+  annotation: "https://t.me/kalosis/330/339",
+  read: "https://t.me/kalosis/330/340"
+},
+{
+  title: "Шеррилин Кеньон / Дом льда и теней (2)",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/BJVLt3f/Myths-and-Outlaws-2.jpg",
+  status: "Активный",
+  series: "Мифы и Отщепенцы",
+  genres: [
+    "Фэнтези"
+  ],
+  tags: [
+    "Отщепенцы",
+    "Единороги",
+    "Драконы",
+    "Оборотни"
+  ],
+  annotation: "https://t.me/kalosis/321/328",
+  read: "https://t.me/kalosis/321/329"
+},
+{
+  title: "Шеррилин Кеньон / Путеводитель: Тёмные охотники",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/gFZsgN48/legend.jpg",
+  status: "Активный",
+  series: "Тёмные Охотники",
+  subseries: "Хроники Ника",
+  arcs: [
+    "Охотники Оборотни",
+    "Адские Ищейки",
+    "Ловцы Снов",
+    "Повелители Авалона",
+    "Крест Мертвеца",
+    "Дилогия: Кровавая луна",
+    "Тетралогия: Восхождение Драконов",
+    "Пенталогия: Дом Дидимоса"
+  ],
+  genres: [
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Охотники",
+    "Демоны",
+    "Боги",
+    "Драконы",
+    "Оборотни"
+  ],
+  annotation: "https://t.me/kalosis/7/10",
+  read: "https://t.me/kalosis/7/10"
+},
+{
+  title: "Шеррилин Кеньон / Путеводитель: Мифы и Отщепенцы",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/GfY2H4JG/Myths-and-Outlaws-4.jpg",
+  status: "Активный",
+  series: "Мифы и Отщепенцы",
+  genres: [
+    "Фэнтези"
+  ],
+  tags: [
+    "Отщепенцы"
+  ],
+  annotation: "https://t.me/kalosis/34/35",
+  read: "https://t.me/kalosis/34/35"
+},
+{
+  title: "Шеррилин Кеньон / Ничей сын (25)",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/Ps7D0jsr/syn.jpg",
+  status: "Завершён",
+  series: "Тёмные Охотники",
+  genres: [
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Охотники",
+    "Демоны",
+    "Боги"
+  ],
+  annotation: "https://t.me/kalosis/96/98",
+  read: "https://t.me/kalosis/96/157"
+},
+{
+  title: "Шеррилин Кеньон / Клеймо дракона (26)",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/TDLqH2wR/drakon.jpg",
+  status: "Завершён",
+  series: "Тёмные Охотники",
+  genres: [
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Охотники Оборотни",
+    "Драконы",
+	"Суженные"
+  ],
+  annotation: "https://t.me/kalosis/192/193",
+  read: "https://t.me/kalosis/192/199"
+},
+{
+  title: "Шеррилин Кеньон / Ведьмин взвар(29.5)",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/sJjMKLnZ/Double-Double-Toil-Trouble.jpg",
+  status: "Завершён",
+  series: "Тёмные Охотники",
+  genres: [
+    "Фэнтези",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Ведьмы",
+    "Демоны"
+  ],
+  annotation: "https://t.me/kalosis/120/121",
+  read: "https://t.me/kalosis/120/124"
+},
+{
+  title: "Шеррилин Кеньон / Диверсия (1)",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/9kvr0mSG/sabotage.jpg",
+  status: "Будущий",
+  series: "Тёмные Охотники",
+  subseries: "Хроники Ника",
+  arcs: [
+    "Тень огня"
+  ],
+  genres: [
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Боги",
+    "Демоны"
+  ],
+  annotation: "https://t.me/sanctuarybar/478",
+  read: "https://t.me/sanctuarybar/478"
+},
+{
+  title: "Шеррилин Кеньон / Последнее Рождество (1.5)",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/WvzsrDFn/Last-Christmas-Sherrilyn-Kenyon.jpg",
+  status: "Завершён",
+  series: "Тёмные Охотники",
+  subseries: "Хроники Ника",
+  arcs: [
+    "Тень огня"
+  ],
+  genres: [
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Боги",
+    "Демоны"
+  ],
+  annotation: "https://t.me/kalosis/330/333",
+  read: "https://t.me/kalosis/330/332"
+},
+{
+  title: "Шеррилин Кеньон / Зверь (2)",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/ds6wYS5R/Savage-2-Sherrilyn-Kenyon.jpg",
+  status: "Будущий",
+  series: "Тёмные Охотники",
+  subseries: "Хроники Ника",
+  arcs: [
+    "Тень огня"
+  ],
+  genres: [
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Боги",
+    "Демоны"
+  ],
+  annotation: "https://t.me/sanctuarybar/478",
+  read: "https://t.me/sanctuarybar/478"
+},
+{
+  title: "Шеррилин Кеньон / Дом пламени и магии (1)",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/v4x47FqT/Myths-and-Outlaws-01.jpg",
+  status: "Завершён",
+  series: "Мифы и Отщепенцы",
+  genres: [
+    "Фэнтези"
+  ],
+  tags: [
+    "Единороги",
+    "Драконы"
+  ],
+  annotation: "https://t.me/kalosis/321/326",
+  read: "https://t.me/kalosis/321/324"
+},
+{
+  title: "Шеррилин Кеньон / Любовные байты",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/YB6JzZ30/Sherrilyn-Kenyon-Love-Bytes.png",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Рождество"
+  ],
+  annotation: "https://t.me/sanctuarybar/373",
+  read: "https://t.me/sanctuarybar/373"
+},
+{
+  title: "Шеррилин Кеньон / Санта со шпорами",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/Pvtv9fML/Santa-Wears-Spurs2.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Исторический роман"
+  ],
+  tags: [
+    "Рождество"
+  ],
+  annotation: "https://t.me/kalosis/188/272",
+  read: "https://t.me/kalosis/188/271"
+},
+{
+  title: "Шеррилин Кеньон / Рыцарские грезы",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/My4SdZP2/Knightly-Dreams.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Фэнтези",
+    "Романтика",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Книжный герой"
+  ],
+  annotation: "https://t.me/sanctuarybar/411",
+  read: "https://t.me/sanctuarybar/411"
+},
+{
+  title: "Шеррилин Кеньон / Тёмные времена",
+  author: "Шеррилин Кеньон",
+  cover: "https://i.ibb.co/zHr9ZVth/Dark-Places.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Городское фэнтези",
+    "Мистика"
+  ],
+  tags: [
+    "Сборник",
+    "Рассказы"
+  ],
+  annotation: "https://t.me/kalosis/188/189",
+  read: "https://t.me/kalosis/188/202"
+},
+{
+  title: "Джейми Шлоссер / Между Рассветом и Закатом (0.5)",
+  author: "Джейми Шлоссер",
+  cover: "https://i.ibb.co/q3wFwLLq/Between-Dawn-and-Dusk-A-Preque-Jamie-Schlosser.jpg",
+  status: "Завершён",
+  series: "Между Рассветом и Закатом",
+  genres: [
+    "Фэнтези",
+	"Эротика"
+  ],
+  tags: [
+    "Феи / Фейри",
+	"Суженные",
+    "Ведьмы"
+  ],
+  annotation: "https://t.me/kalosis/240/245",
+  read: "https://t.me/kalosis/240/244"
+},
+{
+  title: "Джейми Шлоссер / Сноведение короля фейри (2)",
+  author: "Джейми Шлоссер",
+  cover: "https://i.ibb.co/3Yz5mSW2/The-Fae-Kings-Dream-alt.jpg",
+  status: "Будущий",
+  series: "Между Рассветом и Закатом",
+  genres: [
+    "Фэнтези",
+	"Эротика"
+  ],
+  tags: [
+    "Феи / Фейри",
+	"Суженные",
+    "Ведьмы"
+  ],
+  annotation: "https://t.me/kalosis/240/242",
+  read: "https://t.me/kalosis/240/243"
+},
+{
+  title: "Камбриа Хеберт / Белая мгла",
+  author: "Камбриа Хеберт",
+  cover: "https://i.ibb.co/gFvRvyvJ/Whiteout-Final-Low-Resfor-WEB.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Рождество",
+    "Оборотни"
+  ],
+  annotation: "https://t.me/kalosis/204/251",
+  read: "https://t.me/kalosis/204/251"
+},
+{
+  title: "Б. Дж. Харви / Окутанные метелью",
+  author: "Б. Дж. Харви",
+  cover: "https://i.ibb.co/N6qg3yMB/Stranded-3.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Рождество",
+    "Эротика"
+  ],
+  annotation: "https://t.me/kalosis/204/262",
+  read: "https://t.me/kalosis/204/261"
+},
+{
+  title: "Бриттани Ш. Черри / Поиграем в любовь",
+  author: "Бриттани Ш. Черри",
+  cover: "https://i.ibb.co/PZNkPkL2/Christmas.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Рождество",
+    "Голливуд"
+  ],
+  annotation: "https://t.me/kalosis/204/265",
+  read: "https://t.me/kalosis/204/264"
+},
+{
+  title: "София Харпер / Без ума от тебя",
+  author: "София Харпер",
+  cover: "https://i.ibb.co/9mMP5W9c/Sofia-Harper-Crezi.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Рождество",
+    "Недопонимание"
+  ],
+  annotation: "https://t.me/kalosis/204/296",
+  read: "https://t.me/kalosis/204/295"
+},
+{
+  title: "Энджи Стэнтон / Окутанные метелью",
+  author: "Энджи Стэнтон",
+  cover: "https://i.ibb.co/xqKd9r6K/Snowed-Over.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Рождество",
+    "Колледж"
+  ],
+  annotation: "https://t.me/kalosis/204/298",
+  read: "https://t.me/kalosis/204/297"
+},
+{
+  title: "Элда Мингер / Рождество Золушки",
+  author: "Элда Мингер",
+  cover: "https://i.ibb.co/ymFWcyKn/Cinderella-Cristmas.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Рождество"
+  ],
+  annotation: "https://t.me/sanctuarybar/346",
+  read: "https://t.me/sanctuarybar/345"
+},
+{
+  title: "Кристина Кейн / День не святого Валентина",
+  author: "Кристина Кейн",
+  cover: "https://i.ibb.co/QvrbhG3f/Un-Valentine-Day.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Св.Валентина",
+    "Френдзона"
+  ],
+  annotation: "https://t.me/kalosis/204/305",
+  read: "https://t.me/kalosis/204/304"
+},
+{
+  title: "Сидни Логан / Глупый Купидон",
+  author: "Сидни Логан",
+  cover: "https://i.ibb.co/vvsGhJTz/Stupid-Cupid-Sydney-Logan.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Св.Валентина"
+  ],
+  annotation: "https://t.me/kalosis/204/310",
+  read: "https://t.me/kalosis/204/309"
+},
+{
+  title: "Лисса Брайан / Золотая стрела и бабочка",
+  author: "Лисса Брайан",
+  cover: "https://i.ibb.co/ynmNLhcz/The-Golden-Arrow-And-The-Butterfly2.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Фэнтези",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Боги",
+    "Св.Валентина"
+  ],
+  annotation: "https://t.me/sanctuarybar/432",
+  read: "https://t.me/sanctuarybar/432"
+},
+{
+  title: "Сара Пинборо / Дом смерти",
+  author: "Сара Пинборо",
+  cover: "https://i.ibb.co/h17z1BwL/The-Death-House.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Антиутопия",
+    "Драма",
+    "Молодёжный роман"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/281",
+  read: "https://t.me/sanctuarybar/281"
+},
+{
+  title: "Ребекка Ройс / Глаза в глаза (1)",
+  author: "Ребекка Ройс",
+  cover: "https://i.ibb.co/vxjCKyPc/Eye-Contaca-2.png",
+  status: "Завершён",
+  series: "Аномальные",
+  genres: [
+    "Антиутопия"
+  ],
+  tags: [
+    "Одарённые"
+  ],
+  annotation: "https://t.me/sanctuarybar/212",
+  read: "https://t.me/sanctuarybar/211"
+},
+{
+  title: "Ребекка Ройс / Запретные прикосновения (2)",
+  author: "Ребекка Ройс",
+  cover: "https://i.ibb.co/sG63B1w/Embraced-alt2.jpg",
+  status: "Завершён",
+  series: "Аномальные",
+  genres: [
+    "Антиутопия"
+  ],
+  tags: [
+    "Одарённые"
+  ],
+  annotation: "https://t.me/kalosis/204/308",
+  read: "https://t.me/kalosis/204/307"
+},
+{
+  title: "Шеррилл Куинн / Демон ее снов (1)",
+  author: "Шеррилл Куинн",
+  cover: "https://i.ibb.co/bM4GfB0G/sassydevils.jpg",
+  status: "Завершён",
+  series: "Дерзкие дьяволы",
+  genres: [
+    "Эротика",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Эротика",
+    "Демоны"
+  ],
+  annotation: "https://t.me/sanctuarybar/448",
+  read: "https://t.me/sanctuarybar/448"
+},
+{
+  title: "Шеррилл Куинн / Падший ангел (2)",
+  author: "Шеррилл Куинн",
+  cover: "https://i.ibb.co/JWGkbLQN/Fallen-Angel.png",
+  status: "Завершён",
+  series: "Дерзкие дьяволы",
+  genres: [
+    "Эротика",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Эротика",
+    "Ангелы"
+  ],
+  annotation: "https://t.me/sanctuarybar/448",
+  read: "https://t.me/sanctuarybar/448"
+},
+{
+  title: "Эбби Гейл / Всего одна ночь",
+  author: "Эбби Гейл",
+  cover: "https://i.ibb.co/fz3xvMgK/One-Night-Only.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман",
+    "Драма"
+  ],
+  tags: [
+    "Колледж"
+  ],
+  annotation: "https://t.me/sanctuarybar/288",
+  read: "https://t.me/sanctuarybar/288"
+},
+{
+  title: "Аманда Буше / Проклятие весны",
+  author: "Аманда Буше",
+  cover: "https://i.ibb.co/gLRd2bMG/Amanda-Bouchet-A-Curse-for-Spring-2.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Фэнтези",
+    "Сказка"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/267",
+  read: "https://t.me/sanctuarybar/267"
+},
+{
+  title: "Аманда Буше / Любовь с первого багета",
+  author: "Аманда Буше",
+  cover: "https://i.ibb.co/5Xq40t3s/love-at-first-baguette.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман",
+    "Романтика"
+  ],
+  tags: [],
+  annotation: "https://t.me/kalosis/204/237",
+  read: "https://t.me/kalosis/204/237"
+},
+{
+  title: "Аннетт Лайон / Вкус дома",
+  author: "Аннетт Лайон",
+  cover: "https://i.ibb.co/fY2p7XSz/Taste-of-Home.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Исторический роман",
+    "Романтика"
+  ],
+  tags: [
+    "Рождество"
+  ],
+  annotation: "https://t.me/sanctuarybar/321",
+  read: "https://t.me/sanctuarybar/321"
+},
+{
+  title: "Дакс Варли / На крыше",
+  author: "Дакс Варли",
+  cover: "https://i.ibb.co/p6Hj7Kkz/housetop.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Романтика"
+  ],
+  tags: [
+    "Рождество",
+    "Колледж"
+  ],
+  annotation: "https://t.me/sanctuarybar/318",
+  read: "https://t.me/sanctuarybar/318"
+},
+{
+  title: "Вивиан Аренд / Сладкая шалунья",
+  author: "Вивиан Аренд",
+  cover: "https://i.ibb.co/0VcdpHz4/Sweet-Mischief.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Городское фэнтези",
+	"Эротика"
+  ],
+  tags: [
+    "Св.Валентина",
+	"Феи / Фейри"
+  ],
+  annotation: "https://t.me/sanctuarybar/437",
+  read: "https://t.me/sanctuarybar/437"
+},
+{
+  title: "Лоралинн Эллиот / Третье желание",
+  author: "Лоралинн Эллиот",
+  cover: "https://i.ibb.co/8gVTFbZZ/the-third-wish.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Джинны"
+  ],
+  annotation: "https://t.me/sanctuarybar/300",
+  read: "https://t.me/sanctuarybar/300"
+},
+{
+  title: "Стейси Харт / Когда-то",
+  author: "Стейси Харт",
+  cover: "https://i.ibb.co/x8M6XTSX/Staci-Hart-Once3.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Мистика",
+    "Драма"
+  ],
+  tags: [
+    "Призраки"
+  ],
+  annotation: "https://t.me/sanctuarybar/283",
+  read: "https://t.me/sanctuarybar/283"
+},
+{
+  title: "Джули Райт / Танец с луной",
+  author: "Джули Райт",
+  cover: "https://i.ibb.co/cKkQcwzV/Dancing-with-the-Moon.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Фэнтези",
+    "Сказка",
+    "Романтика"
+  ],
+  tags: [
+    "Призраки"
+  ],
+  annotation: "https://t.me/sanctuarybar/269",
+  read: "https://t.me/sanctuarybar/269"
+},
+{
+  title: "Р. К. Мур / Ведьма, живущая по соседству",
+  author: "Р. К. Мур",
+  cover: "https://i.ibb.co/mCrf3Frz/Neighbourhood-Witch.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Городское фэнтези",
+    "Романтика"
+  ],
+  tags: [
+    "Ведьмы"
+  ],
+  annotation: "https://t.me/sanctuarybar/298",
+  read: "https://t.me/sanctuarybar/298"
+},
+{
+  title: "Мина Хан / Рождественское желание(4)",
+  author: "Мина Хан",
+  cover: "https://i.ibb.co/bjGvNsx9/Mina-Khan-Djinn-World-3.jpg",
+  status: "Завершён",
+  series: "Мир джиннов",
+  genres: [
+    "Фэнтези",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Джинны",
+    "Ведьмы"
+  ],
+  annotation: "https://t.me/sanctuarybar/374",
+  read: "https://t.me/sanctuarybar/374"
+},
+{
+  title: "Хезер Б. Мур / Скарлет",
+  author: "Хезер Б. Мур",
+  cover: "https://i.ibb.co/mrc3kCDD/Scarlet.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Фэнтези",
+    "Сказка",
+    "Романтика"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/265",
+  read: "https://t.me/sanctuarybar/265"
+},
+{
+  title: "Хезер Б. Мур (Джейн Редд) / Остров Роз",
+  author: "Хезер Б. Мур",
+  cover: "https://i.ibb.co/LdNXyfjL/Midsummer-Nigh.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Фэнтези",
+    "Сказка",
+    "Романтика"
+  ],
+  tags: [],
+  annotation: "https://t.me/kalosis/204/226",
+  read: "https://t.me/kalosis/204/226"
+},
+{
+  title: "Кристин Фихан / Пробуждение (1)",
+  author: "Кристин Фихан",
+  cover: "https://i.ibb.co/nqq6WhFt/The-Leopard-2.jpg",
+  status: "Завершён",
+  series: "Леопарды",
+  genres: [
+    "Эротика",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Суженные",
+    "Оборотни"
+  ],
+  annotation: "https://t.me/sanctuarybar/222",
+  read: "https://t.me/sanctuarybar/224"
+},
+{
+  title: "Кристин Фихан / Дикий дождь (2)",
+  author: "Кристин Фихан",
+  cover: "https://i.ibb.co/1YBbkr6G/The-Leopard-1.jpg",
+  status: "Завершён",
+  series: "Леопарды",
+  genres: [
+    "Эротика",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Суженные",
+    "Оборотни"
+  ],
+  annotation: "https://t.me/kalosis/204/215",
+  read: "https://t.me/kalosis/204/214"
+},
+{
+  title: "Брин Александр / Рождественское Волшебство",
+  author: "Брин Александр",
+  cover: "https://i.ibb.co/97bLcRv/Christmas-Charm.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Эротика",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Рождество",
+    "Феи / Фейри"
+  ],
+  annotation: "https://t.me/sanctuarybar/338",
+  read: "https://t.me/sanctuarybar/338"
+},
+{
+  title: "Карли Перрен / Подарок",
+  author: "Карли Перрен",
+  cover: "https://i.ibb.co/MyrjtY9M/The-Gift.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Рождество",
+    "Колледж"
+  ],
+  annotation: "https://t.me/sanctuarybar/360",
+  read: "https://t.me/sanctuarybar/360"
+},
+{
+  title: "Китти Френч / Жажда странствий",
+  author: "Китти Френч",
+  cover: "https://i.ibb.co/k7MW6rw/wanderlust-2.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Рождество",
+    "Колледж",
+    "Эротика"
+  ],
+  annotation: "https://t.me/sanctuarybar/380",
+  read: "https://t.me/sanctuarybar/380"
+},
+{
+  title: "Ся Цинвань / Красная нить",
+  author: "Ся Цинвань",
+  cover: "https://i.ibb.co/vx98m8Ch/Red-String.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Исторический роман",
+    "Драма",
+    "Романтика"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/271",
+  read: "https://t.me/sanctuarybar/271"
+},
+{
+  title: "Ив Пауэрс / Перед смертью не надышишься",
+  author: "Ив Пауэрс",
+  cover: "https://i.ibb.co/n8kxvqfD/Six-and-Sexy.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Эротика",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Жнецы"
+  ],
+  annotation: "https://t.me/sanctuarybar/309",
+  read: "https://t.me/sanctuarybar/309"
+},
+{
+  title: "Сойер Беннетт / Если я вернусь",
+  author: "Сойер Беннетт",
+  cover: "https://i.ibb.co/dJ088x9V/If-I-Return.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Рождество",
+    "Эротика"
+  ],
+  annotation: "https://t.me/sanctuarybar/361",
+  read: "https://t.me/sanctuarybar/361"
+},
+{
+  title: "Кэти Ярдли / На крючке (1.5)",
+  author: "Кэти Ярдли",
+  cover: "https://i.ibb.co/gZWdwdVD/Hooked2-Fandom-Hearts.jpg",
+  status: "Завершён",
+  series: "Сердца фанатов",
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Рождество"
+  ],
+  annotation: "https://t.me/sanctuarybar/422",
+  read: "https://t.me/sanctuarybar/422"
+},
+{
+  title: "Бренна Лайонс / Никогда",
+  author: "Бренна Лайонс",
+  cover: "https://i.ibb.co/wh5FpzyC/Brenna-Lyons.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Эротика",
+    "Городское фэнтези"
+  ],
+  tags: [
+    "Ведьмы",
+    "Оборотни"
+  ],
+  annotation: "https://t.me/sanctuarybar/312",
+  read: "https://t.me/sanctuarybar/312"
+},
+{
+  title: "Стефани Перкинс / Йольское чудо",
+  author: "Стефани Перкинс",
+  cover: "https://i.ibb.co/LdtWW0jQ/Yuletide-Miracle.png",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Современный роман"
+  ],
+  tags: [
+    "Рождество",
+    "Колледж"
+  ],
+  annotation: "https://t.me/sanctuarybar/329",
+  read: "https://t.me/sanctuarybar/329"
+},
+{
+  title: "Хун Цзю / Семь жизней",
+  author: "Хун Цзю",
+  cover: "https://i.ibb.co/fYsGTNQX/Seven-life.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Исторический роман",
+    "Сказка",
+    "Романтика"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/272",
+  read: "https://t.me/sanctuarybar/272"
+},
+{
+  title: "Цзюлу Фэйсян / Песня шелковицы",
+  author: "Цзюлу Фэйсян",
+  cover: "https://i.ibb.co/sdHVzHqb/Pecna-shelkovi.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Исторический роман",
+    "Драма"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/274",
+  read: "https://t.me/sanctuarybar/274"
+},
+{
+  title: "Цяо Си / Плач во дворце Чанмэнь",
+  author: "Цяо Си",
+  cover: "https://i.ibb.co/dw20dsfn/Lament-Changmen-Palace.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Исторический роман",
+    "Драма"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/276",
+  read: "https://t.me/sanctuarybar/276"
+},
+{
+  title: "Рэй Карсон / Опасные голоса",
+  author: "Рэй Карсон",
+  cover: "https://i.ibb.co/qLRqx3FS/Dangerou-Voices.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Антиутопия",
+    "Драма"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/286",
+  read: "https://t.me/sanctuarybar/286"
+},
+{
+  title: "Эндрю Леннон / Кошмары: рассказ о страхе",
+  author: "Эндрю Леннон",
+  cover: "https://i.ibb.co/1JYr3bpL/Kochmar.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Мистика"
+  ],
+  tags: [
+    "Рассказы"
+  ],
+  annotation: "https://t.me/sanctuarybar/292",
+  read: "https://t.me/sanctuarybar/272"
+},
+{
+  title: "Эндрю Леннон / Время: рассказ о любви",
+  author: "Эндрю Леннон",
+  cover: "https://i.ibb.co/GvspFtdX/Time.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Мистика",
+    "Драма"
+  ],
+  tags: [
+    "Рассказы"
+  ],
+  annotation: "https://t.me/sanctuarybar/292",
+  read: "https://t.me/sanctuarybar/274"
+},
+{
+  title: "Даринда Джонс / С радостью в омут",
+  author: "Даринда Джонс",
+  cover: "https://i.ibb.co/JwWpfxhq/V-omyt.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Мистика",
+    "Детектив",
+	"Городское фэнтези",
+    "Триллер"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/295",
+  read: "https://t.me/sanctuarybar/295"
+},
+{
+  title: "Даринда Джонс / Страж",
+  author: "Даринда Джонс",
+  cover: "https://i.ibb.co/cX8sfxdf/Sentry.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Молодёжный роман",
+	"Фантастика",
+	"Рассказы"
+  ],
+  tags: [
+    "Рассказы"
+  ],
+  annotation: "https://t.me/sanctuarybar/295",
+  read: "https://t.me/sanctuarybar/295"
+},
+{
+  title: "Даринда Джонс / Нэнси",
+  author: "Даринда Джонс",
+  cover: "https://i.ibb.co/gMTrvbfV/Nansi.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Мистика",
+    "Молодёжный роман",
+	"Рассказы"
+  ],
+  tags: [
+    "Рассказы"
+  ],
+  annotation: "https://t.me/sanctuarybar/295",
+  read: "https://t.me/sanctuarybar/295"
+},
+{
+  title: "Даринда Джонс / Погост",
+  author: "Даринда Джонс",
+  cover: "https://i.ibb.co/xKRJF17T/Graveyard.png",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Мистика",
+	"Рассказы"
+  ],
+  tags: [
+    "Сборник",
+    "Рассказы"
+  ],
+  annotation: "https://t.me/sanctuarybar/295",
+  read: "https://t.me/sanctuarybar/295"
+},
+{
+  title: "Даринда Джонс / Пять дней со страхом",
+  author: "Даринда Джонс",
+  cover: "https://i.ibb.co/Qj16x32s/5Den.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Мистика",
+	"Рассказы"
+  ],
+  tags: [
+    "Сборник"
+  ],
+  annotation: "https://t.me/sanctuarybar/295",
+  read: "https://t.me/sanctuarybar/295"
+},
+{
+  title: "Келли Армстронг / Ракшаси",
+  author: "Келли Армстронг",
+  cover: "https://i.ibb.co/vxyvgpJp/Rakshasi.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Городское фэнтези",
+	"Мистика"
+  ],
+  tags: [
+    "Демоны",
+    "Рассказы"
+  ],
+  annotation: "https://t.me/sanctuarybar/296",
+  read: "https://t.me/sanctuarybar/296"
+},
+{
+  title: "Келли Армстронг / Её маленький домик с привидениями",
+  author: "Келли Армстронг",
+  cover: "https://i.ibb.co/M5PzbYR0/Haunted-House-of-Her-Own.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Рассказы",
+    "Триллер"
+  ],
+  tags: [
+    "Рассказы"
+  ],
+  annotation: "https://t.me/sanctuarybar/296",
+  read: "https://t.me/sanctuarybar/296"
+},
+{
+  title: "Келли Армстронг / Ты для меня мёртв",
+  author: "Келли Армстронг",
+  cover: "https://i.ibb.co/B5pjwYCm/PS.png",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Мистика",
+    "Триллер",
+    "Детектив",
+	"Рассказы"
+  ],
+  tags: [
+    "Рассказы"
+  ],
+  annotation: "https://t.me/sanctuarybar/296",
+  read: "https://t.me/sanctuarybar/296"
+},
+{
+  title: "Келли Армстронг / Запасной план",
+  author: "Келли Армстронг",
+  cover: "https://i.ibb.co/Q322Fs6m/Zapocnoi-plan.jpg",
+  status: "Завершён",
+  standalone: true,
+  genres: [
+    "Мистика",
+    "Триллер",
+    "Детектив",
+	"Рассказы"
+  ],
+  tags: [
+    "Рассказы"
+  ],
+  annotation: "https://t.me/sanctuarybar/296",
+  read: "https://t.me/sanctuarybar/296"
+},
+{
+  title: "Келли Армстронг / Зов (1)",
+  author: "Келли Армстронг",
+  cover: "https://i.ibb.co/m5CQb89h/Zov.jpg",
+  status: "Завершён",
+  series: "Тёмные силы",
+  genres: [
+    "Городское фэнтези",
+    "Молодёжный роман"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/314",
+  read: "https://t.me/sanctuarybar/314"
+},
+{
+  title: "Келли Армстронг / Пробуждение (2)",
+  author: "Келли Армстронг",
+  cover: "https://i.ibb.co/ksbLTS54/Probuchdenie.jpg",
+  status: "Завершён",
+  series: "Тёмные силы",
+  genres: [
+    "Городское фэнтези",
+    "Молодёжный роман"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/314",
+  read: "https://t.me/sanctuarybar/314"
+},
+{
+  title: "Келли Армстронг / Реалистка (2.5)",
+  author: "Келли Армстронг",
+  cover: "https://i.ibb.co/84TxcRK3/Disenchanted.jpg",
+  status: "Завершён",
+  series: "Тёмные силы",
+  genres: [
+    "Городское фэнтези",
+    "Молодёжный роман"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/314",
+  read: "https://t.me/sanctuarybar/314"
+},
+{
+  title: "Келли Армстронг / Расплата (3)",
+  author: "Келли Армстронг",
+  cover: "https://i.ibb.co/MyYnQYsw/Racplata.jpg",
+  status: "Завершён",
+  series: "Тёмные силы",
+  genres: [
+    "Городское фэнтези",
+    "Молодёжный роман"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/314",
+  read: "https://t.me/sanctuarybar/314"
+},
+{
+  title: "Келли Армстронг / Размолвка (3.5)",
+  author: "Келли Армстронг",
+  cover: "https://i.ibb.co/PGdW8jHP/Razmovka.png",
+  status: "Завершён",
+  series: "Тёмные силы",
+  genres: [
+    "Городское фэнтези",
+    "Молодёжный роман"
+  ],
+  tags: [],
+  annotation: "https://t.me/sanctuarybar/314",
+  read: "https://t.me/sanctuarybar/314"
+}
+    ];
+
+    
+const FIXED_CATEGORIES = [
+      { label: "Современный роман", value: "Современный роман" },
+      { label: "Молодёжный роман", value: "Молодёжный роман" },
+      { label: "Исторический роман", value: "Исторический роман" },
+      { label: "Городское фэнтези", value: "Городское фэнтези" },
+      { label: "Фэнтези", value: "Фэнтези" },
+	  { label: "Фантастика", value: "Фантастика" },
+      { label: "Антиутопия", value: "Антиутопия" },
+      { label: "Детектив", value: "Детектив" },
+      { label: "Драма", value: "Драма" },
+      { label: "Мистика", value: "Мистика" },
+      { label: "Триллер", value: "Триллер" },
+      { label: "Сказка", value: "Сказка" },
+      { label: "Романтика", value: "Романтика" },
+      { label: "Эротика", value: "Эротика" },
+      { label: "Рассказы", value: "Рассказы" }
+    ];
+
+    let currentGenre = null;
+    let currentAuthor = null;
+    let currentSeries = null;
+    let currentStandalone = null;
+    let currentTag = null;
+
+    let tempMenuType = "genre";
+    let tempValue = null;
+
+    const searchInput = document.getElementById("searchInput");
+    const bookGrid = document.getElementById("bookGrid");
+    const counter = document.getElementById("counter");
+    const emptyMessage = document.getElementById("emptyMessage");
+    const historyText = document.getElementById("historyText");
+    const filterLine = document.getElementById("filterLine");
+    const filterBackdrop = document.getElementById("filterBackdrop");
+    const sheetCategories = document.getElementById("sheetCategories");
+    const sheetTitle = document.getElementById("sheetTitle");
+    const sheetMainTitle = document.getElementById("sheetMainTitle");
+    const openMenuButtons = document.querySelectorAll(".menu-tab");
+    const homeButton = document.getElementById("homeButton");
+    const sheetResetBtn = document.getElementById("sheetReset");
+    const sheetConfirmBtn = document.getElementById("sheetConfirm");
+
+    function normalizeText(value) {
+      return String(value || "").trim().toLowerCase().replaceAll("ё", "е");
+    }
+
+    function escapeHTML(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function getAuthor(book) {
+      return book.author || String(book.title || "").split(" / ")[0].trim() || "Без автора";
+    }
+
+    function getBookGenres(book) {
+      if (!Array.isArray(book.genres)) return [];
+
+      return book.genres.map(genre => {
+        if (normalizeText(genre) === "городское") return "Городское фэнтези";
+        return genre;
+      });
+    }
+
+    function getBookSeriesItems(book) {
+      const items = [];
+      if (book.series) items.push(book.series);
+      if (book.subseries) items.push(book.subseries);
+      if (Array.isArray(book.arcs)) items.push(...book.arcs);
+      if (book.standalone) items.push("Одиночные романы");
+      return items.filter(Boolean);
+    }
+
+    function getAllAuthors() {
+      return [...new Set(books.map(getAuthor))].sort((a, b) => a.localeCompare(b, "ru"));
+    }
+
+    function getAllSeries() {
+      return [...new Set(books.flatMap(getBookSeriesItems))]
+        .sort((a, b) => a.localeCompare(b, "ru"));
+    }
+
+    function getAllTags() {
+      return [...new Set(books.flatMap(book => book.tags || []))]
+        .sort((a, b) => a.localeCompare(b, "ru"));
+    }
+
+    function getHistory() {
+      return JSON.parse(localStorage.getItem("bookHistory") || "[]");
+    }
+
+    function saveToHistory(title) {
+      let history = getHistory();
+      history = history.filter(item => item !== title);
+      history.unshift(title);
+      history = history.slice(0, 5);
+      localStorage.setItem("bookHistory", JSON.stringify(history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = getHistory();
+      historyText.textContent = history.length ? history.join(" • ") : "История пока пуста.";
+    }
+
+    function clearAllFilters() {
+      currentGenre = null;
+      currentAuthor = null;
+      currentSeries = null;
+      currentStandalone = null;
+      currentTag = null;
+      searchInput.value = "";
+      renderBooks();
+      updateTopMenuActive();
+    }
+
+    function updateTopMenuActive() {
+      homeButton.classList.toggle("active", !currentGenre && !currentAuthor && !currentSeries && !currentTag);
+      openMenuButtons.forEach(button => {
+        const type = button.dataset.menu;
+        button.classList.toggle(
+          "active",
+          (type === "genre" && currentGenre) ||
+          (type === "author" && currentAuthor) ||
+          (type === "series" && currentSeries) ||
+          (type === "standalone" && currentStandalone) ||
+          (type === "tag" && currentTag)
+        );
+      });
+    }
+
+    function openFilterSheet(type) {
+      tempMenuType = type;
+
+      if (type === "genre") {
+        tempValue = currentGenre;
+        sheetTitle.textContent = "Жанры";
+        sheetMainTitle.textContent = "Выберите жанр";
+      }
+
+      if (type === "author") {
+        tempValue = currentAuthor;
+        sheetTitle.textContent = "Авторы";
+        sheetMainTitle.textContent = "Выберите автора";
+      }
+
+      if (type === "series") {
+        tempValue = currentSeries;
+        sheetTitle.textContent = "Серии";
+        sheetMainTitle.textContent = "Выберите серию / подcерию / арку";
+      }
+
+      if (type === "standalone") {
+        tempValue = currentStandalone;
+        sheetTitle.textContent = "Однотомники";
+        sheetMainTitle.textContent = "Выберите раздел";
+      }
+
+      if (type === "tag") {
+        tempValue = currentTag;
+        sheetTitle.textContent = "Подборки";
+        sheetMainTitle.textContent = "Выберите подборку";
+      }
+
+      renderSheetOptions();
+      filterBackdrop.classList.add("open");
+    }
+
+    function closeFilterSheet() {
+      filterBackdrop.classList.remove("open");
+    }
+
+    function getOptionsByMenuType(type) {
+      if (type === "genre") return FIXED_CATEGORIES;
+      if (type === "author") return getAllAuthors().map(author => ({ label: author, value: author }));
+      if (type === "series") return getAllSeries().map(series => ({ label: series, value: series }));
+
+      if (type === "standalone") {
+        return [
+          { label: "Современные романы", value: "Современные романы" },
+          { label: "Исторические романы", value: "Исторические романы" },
+          { label: "Городское фэнтези", value: "Городское фэнтези" },
+          { label: "Детектив", value: "Детектив" },
+          { label: "Драма", value: "Драма" },
+          { label: "Фэнтези", value: "Фэнтези" },
+          { label: "Фантастика", value: "Фантастика" },
+          { label: "Мистика", value: "Мистика" },
+          { label: "Сказки", value: "Сказки" },
+          { label: "Романтика", value: "Романтика" },
+          { label: "Эротика", value: "Эротика" },
+          { label: "Рассказы", value: "Рассказы" }
+        ];
+      }
+
+      if (type === "tag") return getAllTags().map(tag => ({ label: tag, value: tag }));
+      return [];
+    }
+
+    function renderSheetOptions() {
+      const options = getOptionsByMenuType(tempMenuType);
+      sheetCategories.innerHTML = "";
+
+      options.forEach(option => {
+        const button = document.createElement("button");
+        button.className = normalizeText(tempValue) === normalizeText(option.value) ? "sheet-chip selected" : "sheet-chip";
+        button.textContent = option.label;
+        button.addEventListener("click", () => {
+          tempValue = tempValue === option.value ? null : option.value;
+          renderSheetOptions();
+        });
+        sheetCategories.appendChild(button);
+      });
+    }
+
+    function applyFilter(type, value) {
+      currentGenre = null;
+      currentAuthor = null;
+      currentSeries = null;
+      currentStandalone = null;
+      currentTag = null;
+
+      if (type === "genre") currentGenre = value;
+      if (type === "author") currentAuthor = value;
+      if (type === "series") currentSeries = value;
+      if (type === "standalone") currentStandalone = value;
+      if (type === "tag") currentTag = value;
+
+      updateTopMenuActive();
+      renderBooks();
+    }
+
+    function renderFilterLine() {
+      const parts = [];
+
+      if (currentGenre) parts.push(`<span class="active-filter">Жанр: ${escapeHTML(currentGenre)}</span>`);
+      if (currentAuthor) parts.push(`<span class="active-filter">Автор: ${escapeHTML(currentAuthor)}</span>`);
+      if (currentSeries) parts.push(`<span class="active-filter">Серия: ${escapeHTML(currentSeries)}</span>`);
+      if (currentStandalone) parts.push(`<span class="active-filter">Однотомники: ${escapeHTML(currentStandalone)}</span>`);
+      if (currentTag) parts.push(`<span class="active-filter">Подборка: ${escapeHTML(currentTag)}</span>`);
+
+      if (!parts.length) {
+        filterLine.innerHTML = "";
+        return;
+      }
+
+      filterLine.innerHTML = `
+        <span>Выбрано:</span>
+        ${parts.join("")}
+        <button class="reset-filter" onclick="clearAllFilters()">Сбросить</button>
+      `;
+    }
+
+    function renderBooks() {
+      const query = searchInput.value.toLowerCase().trim();
+
+      const filtered = books.filter(book => {
+        const genres = getBookGenres(book);
+        const author = getAuthor(book);
+        const seriesItems = getBookSeriesItems(book);
+
+        const matchesSearch =
+          book.title.toLowerCase().includes(query) ||
+          author.toLowerCase().includes(query) ||
+          seriesItems.some(item => item.toLowerCase().includes(query)) ||
+          (book.tags || []).some(tag => tag.toLowerCase().includes(query)) ||
+          genres.some(genre => genre.toLowerCase().includes(query));
+
+        const matchesGenre =
+          !currentGenre ||
+          genres.some(genre => normalizeText(genre) === normalizeText(currentGenre)) ||
+          (
+            normalizeText(currentGenre) === "рассказы" &&
+            (book.tags || []).some(tag => normalizeText(tag) === "рассказы")
+          ) ||
+          (
+            normalizeText(currentGenre) === "эротика" &&
+            (book.tags || []).some(tag => normalizeText(tag) === "эротика")
+          );
+        const matchesAuthor = !currentAuthor || normalizeText(author) === normalizeText(currentAuthor);
+        const matchesSeries = !currentSeries || seriesItems.some(item => normalizeText(item) === normalizeText(currentSeries));
+        const standaloneGenres = genres.map(g => normalizeText(g));
+        const standaloneTags = (book.tags || []).map(t => normalizeText(t));
+
+        const matchesStandalone =
+          !currentStandalone ||
+          (
+            book.standalone &&
+            (
+              (normalizeText(currentStandalone) === "фэнтези" &&
+                standaloneGenres.includes("фэнтези")) ||
+
+              (normalizeText(currentStandalone) === "фантастика" &&
+                standaloneGenres.includes("фантастика")) ||
+
+              (normalizeText(currentStandalone) === "современные романы" &&
+                standaloneGenres.includes("современный роман")) ||
+
+              (normalizeText(currentStandalone) === "исторические романы" &&
+                standaloneGenres.includes("исторический роман")) ||
+
+              (
+                (normalizeText(currentStandalone) === "городское фэнтези" ||
+                 normalizeText(currentStandalone) === "городское") &&
+                (
+                  standaloneGenres.includes("городское фэнтези") ||
+                  standaloneGenres.includes("городское")
+                )
+              ) ||
+
+              (normalizeText(currentStandalone) === "мистика" &&
+                standaloneGenres.includes("мистика")) ||
+
+              (normalizeText(currentStandalone) === "детектив" &&
+                standaloneGenres.includes("детектив")) ||
+
+              (normalizeText(currentStandalone) === "драма" &&
+                standaloneGenres.includes("драма")) ||
+
+              (
+                normalizeText(currentStandalone) === "сказки" &&
+                standaloneGenres.includes("сказка")
+              ) ||
+
+              (
+                normalizeText(currentStandalone) === "романтика" &&
+                standaloneGenres.includes("романтика")
+              ) ||
+
+              (
+                normalizeText(currentStandalone) === "эротика" &&
+                (
+                  standaloneGenres.includes("эротика") ||
+                  standaloneTags.includes("эротика")
+                )
+              ) ||
+
+              (
+                normalizeText(currentStandalone) === "рассказы" &&
+                (
+                  standaloneGenres.includes("рассказы") ||
+                  standaloneTags.includes("рассказы")
+                )
+              )
+            )
+          );
+
+        const matchesTag = !currentTag || (book.tags || []).some(tag => normalizeText(tag) === normalizeText(currentTag));
+
+        return matchesSearch && matchesGenre && matchesAuthor && matchesSeries && matchesStandalone && matchesTag;
+      });
+
+      bookGrid.innerHTML = "";
+      counter.textContent = `Показано ${filtered.length} из ${books.length} • Всего в каталоге ${books.length}`;
+      emptyMessage.style.display = filtered.length ? "none" : "block";
+      renderFilterLine();
+
+      filtered.forEach(book => {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const tagsHTML = (book.tags || []).map(tag => `
+          <button class="tag ${currentTag === tag ? "active-tag" : ""}" data-tag="${escapeHTML(tag)}">${escapeHTML(tag)}</button>
+        `).join("");
+
+        card.innerHTML = `
+          <div class="cover-wrap">
+            <span class="status-badge">${escapeHTML(book.status)}</span>
+            <img src="${escapeHTML(book.cover)}" alt="${escapeHTML(book.title)}" />
+          </div>
+          <div class="card-content">
+            <h3 class="book-title">${escapeHTML(book.title)}</h3>
+            <div class="tags">${tagsHTML}</div>
+            <div class="links">
+              <a href="${escapeHTML(book.annotation)}" target="_blank">Аннотация</a>
+              <a href="${escapeHTML(book.read)}" target="_blank">Читать</a>
+            </div>
+          </div>
+        `;
+
+        card.querySelectorAll(".tag").forEach(button => {
+          button.addEventListener("click", () => {
+            applyFilter("tag", button.dataset.tag);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+        });
+
+        card.querySelector(".links a:last-child").addEventListener("click", () => saveToHistory(book.title));
+
+        bookGrid.appendChild(card);
+      });
+    }
+
+    homeButton.addEventListener("click", clearAllFilters);
+
+    openMenuButtons.forEach(button => {
+      button.addEventListener("click", () => openFilterSheet(button.dataset.menu));
+    });
+
+    searchInput.addEventListener("input", renderBooks);
+
+    document.getElementById("clearHistory").addEventListener("click", () => {
+      localStorage.removeItem("bookHistory");
+      renderHistory();
+    });
+
+    filterBackdrop.addEventListener("click", (event) => {
+      if (event.target === filterBackdrop) closeFilterSheet();
+    });
+
+    sheetResetBtn.addEventListener("click", () => {
+      tempValue = null;
+      renderSheetOptions();
+    });
+
+    sheetConfirmBtn.addEventListener("click", () => {
+      applyFilter(tempMenuType, tempValue);
+      closeFilterSheet();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    updateTopMenuActive();
+    renderHistory();
+    renderBooks();
+
+  </script>
+</body>
+</html>
