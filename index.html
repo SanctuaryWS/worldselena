@@ -4854,7 +4854,7 @@ function bindSeriesGlossary(){
 function openSeries(name){
   const p=seriesProfiles[name]||{},list=books.filter(b=>seriesListOf(b).includes(name));
   const img=p.image?`<img class="series-banner" src="${esc(p.image)}" alt="${esc(name)}">`:'';
-  const description=p.description?`<section class="content-block entity-description series-description"><h3>Описание серии</h3><div class="prose-text collapsed">${proseHTML(p.description,true)}</div><button class="btn expandable-toggle">Прочитать полностью ▼</button></section>`:'';
+  const description=p.description?`<section class="content-block entity-description series-description"><div class="prose-text collapsed">${proseHTML(p.description,true)}</div><button class="btn expandable-toggle">Прочитать полностью ▼</button></section>`:'';
   let html=`<h1 class="modal-title">${esc(name)}</h1><div class="entity-hero">${img}</div>${description}`;
   if(p.quote)html+=`<section class="content-block"><p>«${esc(p.quote)}»</p></section>`;
   html+=seriesMaterialsHTML(p.materials||[]);
