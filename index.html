@@ -1247,7 +1247,7 @@ const books = [
       }
     ],
   description: "За две недели до Рождества Ева узнаёт, что мужчина, которого она считала любовью всей своей жизни, ей изменяет. Внезапно у неё остаются два билета в рай — и решимость во что бы то ни стало отправиться в путешествие, несмотря на разбитое сердце.\n\nВ кофейне Ева знакомится с Ником — красивым, свободным и таким же влюблённым в Рождество, как она сама. И, повинуясь внезапному порыву, предлагает едва знакомому мужчине второй билет. Кто откажется от оплаченного путешествия в рай?\n\nСолнце, море, белоснежные пляжи и праздничная атмосфера постепенно стирают границы между случайными попутчиками. Между Евой и Ником вспыхивает притяжение, а каждая встреча становится всё более волшебной. Возможно, дело в жарком солнце и расслабляющей атмосфере курорта. А может, это настоящее чувство, которое пришло тогда, когда оба меньше всего его ждали.\n\nНо у Ника есть тайна. И если Ева узнает правду, их маленький рождественский рай может рухнуть в одно мгновение.\n\nСможет ли Ева простить Ника и поверить в их шанс на счастливое будущее?\n\nРождественское чудо уже совсем близко… но времени на него почти не осталось.\n\n<b>Примечание:</b> Изначально данное произведение было опубликовано под названием «Два билета в рай». Год спустя права на его издание приобрёл другой издательский дом, выпустив книгу под названием «Омеловая невеста». При этом содержание произведения после переиздания осталось без изменений.",
-  read: "https://drive.google.com/drive/folders/1B3HiIYfIGc-jG027TQ13voHhi3b3o4Cv?usp=drive_link"
+  read: "https://t.me/sanctuarybar/609"
 },
 {
   title: "Нина Брунс / Санту нельзя не любить",
@@ -4766,11 +4766,19 @@ function bindExpandableText(){
   });
 }
 function bindSeriesMaterials(){
-  $$('.series-materials-toggle').forEach(btn=>btn.onclick=()=>btn.closest('.series-materials').classList.toggle('open'));
+  $$('.series-materials-toggle').forEach(btn=>{
+    btn.onclick=()=>{
+      const section=btn.closest('.series-materials');
+      if(section)section.classList.toggle('open');
+    };
+  });
   $$('.series-material-image').forEach(img=>{
-    const open=()=>openGalleryLightbox(img.dataset.galleryImage||img.src||'',img.dataset.galleryCaption||img.alt||'');
-    img.onclick=open;
-    img.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}};
+    const open=()=>{
+      const src=img.dataset.galleryImage||img.getAttribute('src')||img.src||'';
+      if(src)openGalleryLightbox(src,img.dataset.galleryCaption||img.alt||'');
+    };
+    img.onclick=e=>{e.preventDefault();e.stopPropagation();open()};
+    img.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();open()}};
   });
 }
 function bookGalleryHTML(items){
@@ -4846,7 +4854,7 @@ function bindSeriesGlossary(){
 function openSeries(name){
   const p=seriesProfiles[name]||{},list=books.filter(b=>seriesListOf(b).includes(name));
   const img=p.image?`<img class="series-banner" src="${esc(p.image)}" alt="${esc(name)}">`:'';
-  const description=p.description?`<section class="content-block entity-description series-description"><h3>Описание серии</h3><div class="prose-text">${proseHTML(p.description,true)}</div></section>`:'';
+  const description=p.description?`<section class="content-block entity-description series-description"><h3>Описание серии</h3><div class="prose-text collapsed">${proseHTML(p.description,true)}</div><button class="btn expandable-toggle">Прочитать полностью ▼</button></section>`:'';
   let html=`<h1 class="modal-title">${esc(name)}</h1><div class="entity-hero">${img}</div>${description}`;
   if(p.quote)html+=`<section class="content-block"><p>«${esc(p.quote)}»</p></section>`;
   html+=seriesMaterialsHTML(p.materials||[]);
